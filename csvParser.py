@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 import csv
 import sys
+import numpy as np
 
 
 def csvParser(path):
     try:
-        nodes = []
-        errNodes = []
+        nodes = []  # parsed nodes array
+        errNodes = []  # unparsed nodes array (not possible)
         with open(path, newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=',', quotechar='"')
             next(reader)
             for row in reader:
                 try:
+                    # filter on London's pubs (facultative but really advised)
                     if(row[8] == 'City of London'):
-                        # if(len(nodes) < 20):
                         nodes.append((int(row[5]), int(row[4])))
                 except ValueError:
                     errNodes.append((row))
+
     except csv.Error as e:
         print('file {}, line {}: {}'.format(path, reader.line_num, e))
     except:
@@ -31,8 +33,4 @@ def csvParser(path):
                 file.write(str(node)+'\n')
             file.close()
 
-        filteredNodes = []  # Filtering duplicates values
-        for node in set(nodes):
-            filteredNodes.append(node)
-
-        return filteredNodes
+        return list(set(nodes))  # filtering duplicate values
